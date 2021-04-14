@@ -57,11 +57,6 @@ class GenshinLyreMidiPlayer:
         self.show_help()
         kbd.wait('backspace', suppress=True)
 
-    def msg_filter(self, msg, ch=None):
-        if ch is None:
-            ch = self.channels
-        return self.midi_play_filter(msg, ch)
-
     def show_help(self):
         print('Press "\\" to start/stop playing, press "backspace" to exit.\n')
 
@@ -96,7 +91,7 @@ class GenshinLyreMidiPlayer:
 
             sleep(msg.time)
 
-            if not self.msg_filter(msg):
+            if not self.midi_play_filter(msg):
                 continue
 
             note = msg.note + song.shift
@@ -138,7 +133,7 @@ class GenshinLyreMidiPlayer:
         count_list = [0] * self.octave_interval
         octave_list = [0] * 11
         for msg in midi_iter:
-            if not self.msg_filter(msg):
+            if not self.midi_play_filter(msg):
                 continue
             for i in range(self.octave_interval):
                 note_pitch = (msg.note + i) % self.octave_interval
@@ -159,10 +154,10 @@ class GenshinLyreMidiPlayer:
 
         return idx + (4 - idx2) * self.octave_interval
 
-    def midi_play_filter(self, msg, channels):
+    def midi_play_filter(self, msg):
         if msg.is_meta or msg.type != 'note_on':
             return False
-        if channels and msg.channel not in channels:
+        if self.channels and msg.channel not in self.channels:
             return False
         return True
 
