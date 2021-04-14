@@ -1,2 +1,2 @@
-keyboard
-mido
+keyboard >= 0.13.5, < 1.0.0
+mido >= 1.2.9, < 2.0.0
